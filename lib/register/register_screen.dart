@@ -7,6 +7,8 @@ import 'package:flutter_app_todo_c9_online/home/home_screen.dart';
 import 'package:flutter_app_todo_c9_online/login/login_screen.dart';
 import 'package:flutter_app_todo_c9_online/model/my_user.dart';
 import 'package:flutter_app_todo_c9_online/providers/auth_provider.dart';
+import 'package:flutter_app_todo_c9_online/register/register_navigator.dart';
+import 'package:flutter_app_todo_c9_online/register/register_screen_view_model.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -16,7 +18,7 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 
 }
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen> implements RegisterNavigator {
   var nameController = TextEditingController(text: 'Amira');
 
   var emailController = TextEditingController(text: 'amira2@route.com');
@@ -27,107 +29,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   var formKey = GlobalKey<FormState>();
 
+  RegisterScreenViewModel viewModel = RegisterScreenViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.navigator = this;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Image.asset(
-            'assets/images/main_background.png',
-            width: double.infinity,
-            fit: BoxFit.fill,
-          ),
-          Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-                  CustomTextFormField(
-                    label: 'User Name',
-                    controller: nameController,
-                    myValidator: (text){
-                      if(text == null || text.trim().isEmpty){
-                        return 'Please enter userName';
-                      }
-                      return null ;
-                    },
-                  ),
-                  CustomTextFormField(
-                    label: 'Email Address',
-                    controller: emailController,
-                    myValidator: (text){
-                      if(text == null || text.trim().isEmpty){
-                        return 'Please enter email Address';
-                      }
-                      bool emailValid =
-                      RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                          .hasMatch(text);
-                      if(!emailValid){
-                        return 'Please enter valid email';
-                      }
-                      return null ;
-                    },
-                  ),
-                  CustomTextFormField(
-                    label: 'Password',
-                    controller: passwordController,
-                    isPassword: true,
-                    keyboardType: TextInputType.number,
-                    myValidator: (text){
-                      if(text == null || text.trim().isEmpty){
-                        return 'Please enter Password';
-                      }
-                      if(text.length < 6){
-                        return 'Password should be at least 6 chars.';
-                      }
-                      return null ;
-                    },
-                  ),
-                  CustomTextFormField(
-                    label: 'Confirmation Password',
-                    controller: confirmationPasswordController,
-                    isPassword: true,
-                    keyboardType: TextInputType.number,
-                    myValidator: (text){
-                      if(text == null || text.trim().isEmpty){
-                        return 'Please enter ConfirmationPassword';
-                      }
-                      if(text != passwordController.text){
-                        return "password doesn't match";
-                      }
-                      return null ;
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 10)
-                      ),
-                        onPressed: (){
-                        register();
-                        },
-                        child: Text('Register',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        )),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height*0.1,),
+    return ChangeNotifierProvider(
+      create: (context ) => viewModel,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Image.asset(
+              'assets/images/main_background.png',
+              width: double.infinity,
+              fit: BoxFit.fill,
+            ),
+            Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                    CustomTextFormField(
+                      label: 'User Name',
+                      controller: nameController,
+                      myValidator: (text){
+                        if(text == null || text.trim().isEmpty){
+                          return 'Please enter userName';
+                        }
+                        return null ;
+                      },
+                    ),
+                    CustomTextFormField(
+                      label: 'Email Address',
+                      controller: emailController,
+                      myValidator: (text){
+                        if(text == null || text.trim().isEmpty){
+                          return 'Please enter email Address';
+                        }
+                        bool emailValid =
+                        RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(text);
+                        if(!emailValid){
+                          return 'Please enter valid email';
+                        }
+                        return null ;
+                      },
+                    ),
+                    CustomTextFormField(
+                      label: 'Password',
+                      controller: passwordController,
+                      isPassword: true,
+                      keyboardType: TextInputType.number,
+                      myValidator: (text){
+                        if(text == null || text.trim().isEmpty){
+                          return 'Please enter Password';
+                        }
+                        if(text.length < 6){
+                          return 'Password should be at least 6 chars.';
+                        }
+                        return null ;
+                      },
+                    ),
+                    CustomTextFormField(
+                      label: 'Confirmation Password',
+                      controller: confirmationPasswordController,
+                      isPassword: true,
+                      keyboardType: TextInputType.number,
+                      myValidator: (text){
+                        if(text == null || text.trim().isEmpty){
+                          return 'Please enter ConfirmationPassword';
+                        }
+                        if(text != passwordController.text){
+                          return "password doesn't match";
+                        }
+                        return null ;
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 10)
+                        ),
+                          onPressed: (){
+                          register();
+                          },
+                          child: Text('Register',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height*0.1,),
 
-                  TextButton(onPressed: (){
-                    Navigator.of(context).pushNamed(LoginScreen.routeName);
-                  }, child: Text('Already have an account',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).primaryColor
-                      )
-                  ),
-                  )
-                ],
+                    TextButton(onPressed: (){
+                      Navigator.of(context).pushNamed(LoginScreen.routeName);
+                    }, child: Text('Already have an account',
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            color: Theme.of(context).primaryColor
+                        )
+                    ),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -135,50 +148,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void register() async{
     if(formKey.currentState?.validate() == true){
       /// register
-      /// show loading
-      DialogUtils.showLoading(context, 'Loading...');
-      try {
-        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        MyUser myUser = MyUser(
-            id: credential.user?.uid ?? '',
-            name: nameController.text,
-            email: emailController.text
-        );
-        var authProvider = Provider.of<AuthProvider>(context,listen: false);
-        authProvider.updateUser(myUser);
-        await FirebaseUtils.addUserToFireStore(myUser);
-
-        /// hide loading
-        DialogUtils.hideLoading(context);
-        /// show message
-        DialogUtils.showMessage(context, 'Register Succuessfully',
-          title: 'Success',
-          posActionName: 'Ok',
-          posAction: (){
-          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-          }
-        );
-      } on FirebaseAuthException catch (e) {
-        /// hide loading
-        /// show message (error)
-        String errorMessage = 'Something went wrong';
-        if (e.code == 'weak-password') {
-          DialogUtils.hideLoading(context);
-          errorMessage = 'The password provided is too weak.';
-          DialogUtils.showMessage(context, errorMessage);
-        } else if (e.code == 'email-already-in-use') {
-          DialogUtils.hideLoading(context);
-          errorMessage = 'The account already exists for that email.';
-          DialogUtils.showMessage(context,
-            'The account already exists for that email.');
-        }
-      } catch (e) {
-        DialogUtils.hideLoading(context);
-        DialogUtils.showMessage(context, e.toString());
-      }
+      viewModel.register(emailController.text, passwordController.text);
     }
+  }
+
+  @override
+  void hideMyLoading() {
+    DialogUtils.hideLoading(context);
+  }
+
+  @override
+  void showMyLoading() {
+    DialogUtils.showLoading(context, 'Loading...');
+  }
+
+  @override
+  void showMyMessage(String message) {
+    DialogUtils.showMessage(context, message,
+      posActionName: 'OK'
+    );
   }
 }
